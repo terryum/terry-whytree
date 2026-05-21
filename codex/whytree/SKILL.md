@@ -17,11 +17,12 @@ Use `/Users/terrytaewoongum/Codes/personal/terry-whytree/SKILL.md` as the source
   ```
 - For demo mode, read `DEMO_MODE.md` from the repo and use the same repo-local preamble path.
 - Preferred Codex model: `gpt-5.4-mini`. Why Tree sessions are short, conversational, and only need light local Markdown/JSON updates, so this is the right default balance of cost, latency, and capability.
-- If the current Codex model is `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex`, `gpt-5.2`, or another expensive/deep coding model, recommend restarting before the session with:
-  ```bash
-  codex -m gpt-5.4-mini -C "$PWD"
-  ```
-  If Terry declines, continue the session without asking again.
+- If the current Codex model is `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex`, `gpt-5.2`, or another expensive/deep coding model, use the source skill's Codex handoff protocol:
+  - remember the original model and reasoning effort, e.g. `gpt-5.5 high`;
+  - if the runtime exposes an assistant-callable model-switch operation, switch to `gpt-5.4-mini` before the first Why Tree question;
+  - at the end of the Commitment Arc, after syncing Whytree memory and before the final closing message, switch back to the remembered original model and reasoning effort;
+  - do not edit `~/.codex/config.toml` as a substitute for runtime switching;
+  - if no assistant-callable model switch exists, say so in one sentence and offer `codex -m gpt-5.4-mini -C "$PWD"` as the fallback. If Terry declines, continue the session without asking again.
 - Do not recommend `gpt-5.3-codex-spark` as the default because it is a research preview.
 - Keep the source operating rules: one question at a time, never show raw JSON/node IDs/file paths, and render only user-facing tree visualizations.
 - Store and update tree JSON in `~/.whytree` using the schema in the source skill.

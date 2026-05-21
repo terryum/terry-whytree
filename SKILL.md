@@ -195,9 +195,15 @@ Do not automatically read Terry's Facebook archive, public posts, papers, or sur
 
 **Model check (after preamble, before session flow).** Check your own model ID from your system context and apply the runtime-specific guard:
 
-- **Codex:** Why Tree sessions are short, conversational, and usually only need light local Markdown/JSON updates. Prefer `gpt-5.4-mini` for lower latency and cost. If the current model is `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex`, `gpt-5.2`, or another expensive/deep coding model, pause and tell the user:
+- **Codex:** Why Tree sessions are short, conversational, and usually only need light local Markdown/JSON updates. Prefer `gpt-5.4-mini` for lower latency and cost. If the current model is `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex`, `gpt-5.2`, or another expensive/deep coding model, use this handoff protocol:
 
-  > "Hey — I noticed you're running on [model name]. Why Tree works best on `gpt-5.4-mini` in Codex: it is fast and cheap enough for short back-and-forth sessions, while still capable of the local file updates this skill needs. If you want, restart with `codex -m gpt-5.4-mini -C \"$PWD\"` before we begin."
+  1. Remember the original model and reasoning effort for this session, e.g. `gpt-5.5 high`.
+  2. If the current Codex runtime exposes a model-switch operation to the assistant, switch to `gpt-5.4-mini` before asking the first Why Tree question. Use low or medium reasoning effort unless Terry explicitly asks for deeper analysis.
+  3. At the end of the Commitment Arc, after syncing local Whytree memory and before the final closing message, switch back to the remembered original model and reasoning effort.
+  4. Do **not** edit `~/.codex/config.toml` as a substitute for runtime switching. Config changes only affect later sessions and may leave Terry's global default in the wrong state if the session exits unexpectedly.
+  5. If no assistant-callable model-switch operation is available, be transparent in one sentence and offer the lowest-friction fallback:
+
+     > "I can't programmatically switch the active Codex model from inside a skill in this runtime. For this session, either continue here or start Why Tree with `codex -m gpt-5.4-mini -C \"$PWD\"`; I won't change your global default."
 
   Do not recommend `gpt-5.3-codex-spark` as the default because it is a research preview. If the user continues anyway, note it and proceed. If the model is unknown, mention `gpt-5.4-mini` once as the preferred next-session model, then proceed.
 - **Claude:** If the model ID does **not** contain `sonnet`, pause and tell the user:
