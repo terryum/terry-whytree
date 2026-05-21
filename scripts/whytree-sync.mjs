@@ -16,11 +16,20 @@ const OUT_DIR = process.env.WHYTREE_SYNC_OUT || path.join(
 );
 const GENERATED_START = '<!-- whytree-sync:generated:start -->';
 const GENERATED_END = '<!-- whytree-sync:generated:end -->';
+const SESSION_DIR = path.join(OUT_DIR, 'sessions');
+const PROFILE_MD = path.join(OUT_DIR, 'profile.md');
+const PROFILE_JSON = path.join(OUT_DIR, 'profile.json');
+const AGENT_BRIEF = path.join(OUT_DIR, 'agent-brief.md');
+const EVIDENCE_JSONL = path.join(OUT_DIR, 'evidence.jsonl');
 const NARRATIVE_SECTIONS = [
   '세션 요약',
-  '이번에 새로 보인 것',
+  '새로 보인 자기 이해',
+  '가치와 동기',
+  '긴장/두려움/회피 패턴',
+  '커리어와 삶의 의사결정 힌트',
   '다음까지 해볼 한 가지 (Experiment)',
-  '미해결 갈래',
+  '미해결 질문',
+  'Evidence',
   '메모',
 ];
 
@@ -60,7 +69,7 @@ function printHelp() {
 
 Environment:
   WHYTREE_SYNC_HOME  Override ~/.whytree for tests
-  WHYTREE_SYNC_OUT   Override Terry's Obsidian Whytree digest directory for tests`);
+  WHYTREE_SYNC_OUT   Override Terry's Obsidian Whytree memory directory for tests`);
 }
 
 async function readJson(filePath) {
@@ -259,7 +268,10 @@ function defaultSectionContent(section, tree) {
     const experiment = experimentLabel(tree);
     return experiment ? `- ${experiment}` : '- 아직 기록된 실험이 없습니다.';
   }
-  if (section === '미해결 갈래') return '- 다음 세션에서 이어서 확인한다.';
+  if (section === 'Evidence') {
+    return '- 이번 세션에서 추가한 evidence ID를 여기에 적는다. 예: `wt-YYYYMMDD-001`';
+  }
+  if (section === '미해결 질문') return '- 다음 세션에서 이어서 확인한다.';
   return '- ';
 }
 
@@ -315,10 +327,118 @@ async function readExistingNote(outPath) {
 }
 
 function outputPath(slug, date) {
-  return path.join(OUT_DIR, `${yymmddKst(date)}-${slug}.md`);
+  return path.join(SESSION_DIR, `${yymmddKst(date)}-${slug}.md`);
+}
+
+async function writeIfMissing(filePath, content) {
+  try {
+    await fs.access(filePath);
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    await fs.writeFile(filePath, content, 'utf8');
+  }
+}
+
+function profileMarkdownTemplate() {
+  return `# Terry Whytree Profile
+
+> Local-only private memory. Do not commit or publish this file.
+
+## Terry brief
+
+-
+
+## Personality / persona
+
+-
+
+## Core values and life direction
+
+-
+
+## Career decision principles
+
+-
+
+## Inner tensions, fears, and avoidance patterns
+
+-
+
+## Work style and collaboration preferences
+
+-
+
+## Live experiments
+
+-
+
+## Open questions
+
+-
+
+## Evidence index
+
+- Evidence lives in \`evidence.jsonl\`; cite IDs here when a profile claim depends on a specific session.
+`;
+}
+
+function agentBriefTemplate() {
+  return `# Terry Agent Brief
+
+> Local-only private briefing for future AI agents. Do not commit or publish this file.
+
+## Before helping Terry
+
+-
+
+## How Terry tends to think and decide
+
+-
+
+## What to respect
+
+-
+
+## Current direction
+
+-
+
+## Useful context links
+
+- Whytree profile: [[profile]]
+- Whytree sessions: [[sessions]]
+`;
+}
+
+function profileJsonTemplate() {
+  return `${JSON.stringify({
+    schemaVersion: 1,
+    updatedAt: '',
+    terryBrief: '',
+    personalityPersona: [],
+    coreValues: [],
+    lifeDirection: [],
+    careerDecisionPrinciples: [],
+    innerTensions: [],
+    fearsAndAvoidancePatterns: [],
+    workStyle: [],
+    collaborationPreferences: [],
+    liveExperiments: [],
+    openQuestions: [],
+    evidenceIds: [],
+  }, null, 2)}\n`;
+}
+
+async function ensureMemoryPack() {
+  await fs.mkdir(SESSION_DIR, { recursive: true });
+  await writeIfMissing(PROFILE_MD, profileMarkdownTemplate());
+  await writeIfMissing(PROFILE_JSON, profileJsonTemplate());
+  await writeIfMissing(AGENT_BRIEF, agentBriefTemplate());
+  await writeIfMissing(EVIDENCE_JSONL, '');
 }
 
 async function syncSlug(slug, mode) {
+  await ensureMemoryPack();
   const treePath = path.join(WHYTREE_DIR, `${slug}.json`);
   const tree = await readJson(treePath);
   const date = dateForMode(tree, mode);
@@ -326,7 +446,7 @@ async function syncSlug(slug, mode) {
   const outPath = outputPath(slug, date);
   const existing = await readExistingNote(outPath);
   const markdown = renderMarkdown(tree, slug, sessionDate, existing);
-  await fs.mkdir(OUT_DIR, { recursive: true });
+  await fs.mkdir(path.dirname(outPath), { recursive: true });
   await fs.writeFile(outPath, markdown, 'utf8');
   return path.relative(REPO_ROOT, outPath);
 }
@@ -341,7 +461,17 @@ async function main() {
     written.push(await syncSlug(slug, args.mode));
   }
 
-  console.log(JSON.stringify({ ok: true, written }, null, 2));
+  console.log(JSON.stringify({
+    ok: true,
+    written,
+    memoryPack: {
+      sessionDir: path.relative(REPO_ROOT, SESSION_DIR),
+      profile: path.relative(REPO_ROOT, PROFILE_MD),
+      profileJson: path.relative(REPO_ROOT, PROFILE_JSON),
+      agentBrief: path.relative(REPO_ROOT, AGENT_BRIEF),
+      evidence: path.relative(REPO_ROOT, EVIDENCE_JSONL),
+    },
+  }, null, 2));
 }
 
 main().catch((error) => fail(error.stack || error.message));

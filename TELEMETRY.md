@@ -1,11 +1,11 @@
 # Telemetry — Analytics consent & Feedback
 
-This file owns everything that sends data off the user's machine: the analytics consent state machine, the session ping, and the proactive/user-initiated feedback flow (draft → confirm → save → send). The counselor's session flow in SKILL.md stays silent about the mechanics and only references this file at the moments where telemetry decisions enter the flow:
+This file owns the only data that may leave the user's machine: the analytics consent state machine and the content-free session ping. Feedback is local-only in Terry's fork. The counselor's session flow in SKILL.md stays silent about the mechanics and only references this file at the moments where telemetry decisions enter the flow:
 
 - **Session start** — parse `CONSENT` from the preamble and route per the state machine below. First-time prompt, legacy re-prompt, or silent send.
 - **When the user asks to change their analytics preference** — update `~/.whytree/.analytics-consent`.
-- **When a feedback trigger fires during a session** — run the Offer flow below.
-- **When the user explicitly asks to send feedback** — run the User-initiated path below.
+- **When a feedback trigger fires during a session** — run the local-only Offer flow below.
+- **When the user explicitly asks to record feedback** — run the User-initiated local-only path below.
 
 Operating rules from SKILL.md still apply (never show raw JSON, never interpolate user input into shell commands, etc.).
 
@@ -51,7 +51,7 @@ Payloads contain only the device ID, a fixed command string, and integers — no
 
 ## Feedback
 
-Feedback is **proactive, not end-of-session**. Watch for two kinds of moments and offer to send a short note that you have already drafted — the user just confirms.
+Feedback is **proactive, not end-of-session**. In Terry's fork, feedback is saved locally only and is never sent to a remote server. Watch for two kinds of moments and offer to record a short note that you have already drafted — the user just confirms.
 
 ### Triggers
 
@@ -73,16 +73,16 @@ If the user has already declined a feedback offer this session, do not offer aga
 
 2. **Show the draft and ask.** One short turn:
 
-   > *"One quick thing — I'd like to flag this so it can shape the tool for the next person. Here's what I'd send (no personal content):*
+   > *"One quick thing — I'd like to flag this so it can shape the tool for the next version. Here's what I'd record locally (no personal content):*
    >
    > *> [draft]*
    >
-   > *Send it? Just yes/no, or edit the wording."*
+   > *Save it locally? Just yes/no, or edit the wording."*
 
 3. **Act on the response:**
-   - **yes** → save and send (steps below).
+   - **yes** → save locally (steps below).
    - **no** → drop it silently, do not offer again this session.
-   - **edit** → accept their wording, re-confirm, then save and send.
+   - **edit** → accept their wording, re-confirm, then save locally.
 
 ### Examples of acceptable depersonalized drafts
 
@@ -95,7 +95,7 @@ If the user has already declined a feedback offer this session, do not offer aga
 - ❌ *"User found that 'need for external validation' and '안정감' are in tension."* → strip the labels.
 - ❌ *"User Jisoo had an insight about their tree."* → strip the name.
 
-### Save and send
+### Save locally
 
 **Allowed `category` / `feedbackCategory` values** (pick the closest match — do not invent new ones):
 
@@ -109,20 +109,10 @@ If the user has already declined a feedback offer this session, do not offer aga
 | `localization` | Language-specific issues (Korean, etc.) |
 | `general` | None of the above; use sparingly |
 
-1. Save locally: **read** `~/.whytree/feedback/feedback.jsonl`, append one JSON line (`{"message":"...","category":"<one of the above>","ts":"ISO 8601"}`), and **write** the result back with the Write tool. **Never use Bash to write user content to files.**
-2. Send to server using a temp file to avoid shell injection:
-   - Read the device ID from `~/.whytree/.device-id`. Use the **Write tool** to create a temp file (e.g., `/tmp/whytree-feedback.json`) containing the JSON payload: `{"deviceId":"<device-id>","command":"feedback","feedbackMessage":"<message>","feedbackCategory":"<category>"}`. The `<message>` and `<category>` values must be properly JSON-escaped (escape `"`, `\`, newlines). **Never interpolate user input into a shell command.**
-   - Then run via Bash:
-```bash
-curl -s --max-time 10 -X POST https://kardens.io/api/whytree-telemetry \
-  -H "Content-Type: application/json" \
-  -H "X-Whytree-Key: whytree-v1-public-telemetry" \
-  -d @/tmp/whytree-feedback.json; rm -f /tmp/whytree-feedback.json
-```
-3. Brief thanks: *"Sent — that helps the next person."*
+Save locally: **read** `~/.whytree/feedback/feedback.jsonl`, append one JSON line (`{"message":"...","category":"<one of the above>","ts":"ISO 8601"}`), and **write** the result back with the Write tool. **Never use Bash to write user content to files.** Brief thanks: *"Saved locally — that helps shape the next version."*
 
 ### User-initiated feedback
 
-If the user explicitly asks to send feedback (unprompted), follow the same draft → confirm → save → send flow, but the draft should reflect what *they* asked you to convey. The depersonalization rules still apply.
+If the user explicitly asks to record feedback (unprompted), follow the same draft → confirm → local-save flow, but the draft should reflect what *they* asked you to record. The depersonalization rules still apply.
 
 **Never include node labels, tree content, or personal discoveries** in the feedback message.

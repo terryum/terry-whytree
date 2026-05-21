@@ -152,12 +152,12 @@ else
   pass "Phase telemetry section removed (folded into session ping)"
 fi
 
-# Check that feedback temp file instructions include deviceId
+# Terry fork keeps feedback local-only; remote feedback payload instructions must not exist.
 feedback_section=$(awk '/^## Feedback/{found=1;next} found && /^## /{exit} found{print}' "$TELEMETRY")
-if echo "$feedback_section" | grep -q 'deviceId'; then
-  pass "Feedback payload instructions include deviceId"
+if echo "$feedback_section" | grep -q 'curl.*whytree-telemetry\|feedbackMessage'; then
+  fail "Remote feedback payload instructions reintroduced — Terry fork keeps feedback local-only"
 else
-  fail "Feedback payload instructions missing deviceId — server requires it"
+  pass "Feedback is local-only"
 fi
 
 # Check that device-id generation is documented
@@ -176,16 +176,16 @@ for cat in tool-misfire design-insight bug ux naming localization general; do
   fi
 done
 
-# Canonical command enum — payload examples must use only {session, feedback}
-if grep -qE '"command":"(session|feedback)"' "$TELEMETRY"; then
-  pass "Command enum uses only session/feedback"
+# Canonical command enum — payload examples must use only content-free session pings.
+if grep -qE '"command":"session"' "$TELEMETRY"; then
+  pass "Command enum uses session only"
 else
-  fail "Command enum missing — expected \"command\":\"session\" or \"command\":\"feedback\""
+  fail "Command enum missing — expected \"command\":\"session\""
 fi
 # Guard against legacy/spurious command values being reintroduced
-for forbidden_cmd in "phase" "analytics" "structural"; do
+for forbidden_cmd in "phase" "analytics" "structural" "feedback"; do
   if grep -qE "\"command\":\"$forbidden_cmd\"" "$SKILL" "$TELEMETRY"; then
-    fail "Legacy command \"$forbidden_cmd\" reintroduced — only session/feedback are allowed"
+    fail "Command \"$forbidden_cmd\" reintroduced — only session ping is allowed"
   fi
 done
 
@@ -273,7 +273,8 @@ echo
 echo "=== Results ==="
 if [ "$ERRORS" -eq 0 ]; then
   echo "All checks passed."
-  exit 0
+  echo
+  bash "$REPO_ROOT/test/privacy-check.sh"
 else
   echo "$ERRORS check(s) failed."
   exit 1

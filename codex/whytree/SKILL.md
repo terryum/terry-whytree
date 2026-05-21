@@ -19,14 +19,17 @@ Use `/Users/terrytaewoongum/Codes/personal/terry-whytree/SKILL.md` as the source
 - Ignore the Claude Sonnet model guard. Codex is the intended runtime for this port.
 - Keep the source operating rules: one question at a time, never show raw JSON/node IDs/file paths, and render only user-facing tree visualizations.
 - Store and update tree JSON in `~/.whytree` using the schema in the source skill.
+- At session start, read only Whytree private memory if present: `profile.md` and `agent-brief.md` in the Obsidian digest directory. Do not automatically search Facebook, posts, papers, or surveys.
 - After the Commitment Arc closes, sync the current tree with:
   ```bash
   node /Users/terrytaewoongum/Codes/personal/terry-whytree/scripts/whytree-sync.mjs --current
   ```
-- Then update the generated Obsidian note's narrative sections in Korean, preserving the generated Purpose/tree block.
+- Then update the generated Obsidian session note plus `profile.md`, `profile.json`, `agent-brief.md`, and `evidence.jsonl` in Korean, preserving the generated Purpose/tree block.
+- Never commit or publish generated Whytree private memory files.
 
 ## Terry Context
 
 - Obsidian digest directory: `/Users/terrytaewoongum/Codes/personal/terry-obsidian/vault/Private/Whytree`
+- Generated memory files are local-only and gitignored in `terry-obsidian`.
 - Existing trees are already in `~/.whytree`; do not migrate or rename them unless Terry explicitly asks.
-- This port intentionally keeps the current Why Tree method unchanged. Personal upgrades should be made in a later phase.
+- This port keeps the core Why Tree method, but adds Terry-specific local memory dataization.

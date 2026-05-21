@@ -186,6 +186,13 @@ If `UPDATES_AVAILABLE` > 0, the log output shows what changed. Offer the update.
 
 Use `USER_STATUS` and `SESSION_GAP` for Phase 0 and Return Check-in routing.
 
+**Terry private memory load.** If these local-only files exist, read them silently after the preamble and use them as background context only:
+
+- `$HOME/Codes/personal/terry-obsidian/vault/Private/Whytree/profile.md`
+- `$HOME/Codes/personal/terry-obsidian/vault/Private/Whytree/agent-brief.md`
+
+Do not automatically read Terry's Facebook archive, public posts, papers, or surveys. Those are separate memory systems and should only be searched when Terry explicitly asks. The Whytree memory files are private context; never quote them as file contents, expose local paths to the user, or commit them.
+
 **Model check (after preamble, before session flow).** Check your own model ID from your system context. If the model ID does **not** contain `sonnet`, pause and tell the user:
 
 > "Hey — I noticed you're running on [model name]. Why Tree sessions work best on Sonnet (faster, more conversational). You can switch with `/model claude-sonnet-4-6` (or any newer Sonnet). Want to switch before we start?"
@@ -444,15 +451,26 @@ After the normal Commitment Arc close is complete, sync the active tree into Ter
 node "$HOME/Codes/personal/terry-whytree/scripts/whytree-sync.mjs" --current
 ```
 
-Then update the generated note's narrative sections in Korean, based only on the just-finished conversation:
+Then update the generated local-only memory pack in Korean, based only on the just-finished conversation:
 
 - `세션 요약`: 2-4 concise sentences naming the session flow and where the Commitment Arc landed.
-- `이번에 새로 보인 것`: 1-3 bullets for genuine new recognitions from the conversation.
+- `새로 보인 자기 이해`: 1-3 bullets for genuine new recognitions from the conversation.
+- `가치와 동기`: core values, drives, and recurring energy sources that became clearer.
+- `긴장/두려움/회피 패턴`: tensions, fears, avoidance patterns, or inner conflicts worth remembering.
+- `커리어와 삶의 의사결정 힌트`: decision principles or career/life direction signals surfaced in the session.
 - `다음까지 해볼 한 가지 (Experiment)`: the selected experiment in the user's language, with any concrete time/place/duration that emerged.
-- `미해결 갈래`: open threads worth revisiting; use `- 없음` only if the close genuinely settled the live branches.
+- `미해결 질문`: open threads worth revisiting; use `- 없음` only if the close genuinely settled the live branches.
+- `Evidence`: append IDs for entries added to `evidence.jsonl`.
 - `메모`: leave as `- ` unless the user explicitly asked to record an extra memo.
 
-Do not alter the generated Purpose or tree visualization block by hand; rerun the sync command if the tree changed. Keep telemetry and proactive feedback behavior exactly as specified in TELEMETRY.md. Do not show raw JSON, node IDs, internal file data, or local file paths to the user.
+Also update these local-only files:
+
+- `profile.md`: rolling human-readable Terry profile. Keep it concise and cumulative; revise stale claims instead of only appending.
+- `profile.json`: structured mirror of the profile fields. Keep valid JSON and include only compact summaries, not transcript-like quotes.
+- `agent-brief.md`: short briefing a future AI agent should read before helping Terry.
+- `evidence.jsonl`: append one JSON line per durable self-knowledge claim, with an ID like `wt-YYYYMMDD-001`, `session_date`, `tree_slug`, `kind`, and `summary`. Do not store raw conversation excerpts.
+
+Do not alter the generated Purpose or tree visualization block by hand; rerun the sync command if the tree changed. Keep telemetry and proactive feedback behavior exactly as specified in TELEMETRY.md. Do not show raw JSON, node IDs, internal file data, or local file paths to the user. Never commit or publish any generated memory pack output.
 
 ### Phase 5b: Decision Session (post-discovery mode)
 
@@ -476,8 +494,8 @@ Do not re-enter discovery. The purpose is confirmed. This session uses the tree 
 
 - **Session start** — parse `CONSENT` from the preamble and follow the state machine in TELEMETRY.md. For `yes-v2`, send the session ping. For `NO_CONSENT_FILE` or legacy `yes`, use the prompt in TELEMETRY.md and complete the consent flow per that file. For `no`, do nothing.
 - **User asks to change analytics preference** — TELEMETRY.md has the update procedure.
-- **A feedback trigger fires** (tool misfired or a design-relevant insight surfaced) — TELEMETRY.md has the Trigger list, Offer flow, depersonalization rule, `feedbackCategory` enum, and save/send mechanics. Offer feedback at most once per session; never end-of-session.
-- **User asks to send feedback unprompted** — same draft → confirm → save → send flow in TELEMETRY.md (User-initiated section).
+- **A feedback trigger fires** (tool misfired or a design-relevant insight surfaced) — TELEMETRY.md has the Trigger list, Offer flow, depersonalization rule, `feedbackCategory` enum, and local-save mechanics. Offer feedback at most once per session; never end-of-session.
+- **User asks to record feedback unprompted** — same draft → confirm → local-save flow in TELEMETRY.md (User-initiated section).
 
 Key invariants (also enforced in TELEMETRY.md — repeated here because they're safety-critical): **Never interpolate user input into a shell command.** Feedback drafts must contain **no node labels, no purpose statements, no quoted user words, no tree names, no personal context**. Analytics payloads contain only the device ID, a fixed `command` string, and integers — no user content ever.
 

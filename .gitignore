@@ -3,3 +3,8 @@ node_modules/
 .heartbeat
 *.pdf
 docs/stress-test-results/
+
+# Terry local-only generated memory/output. Never publish private sessions.
+.whytree/
+vault/Private/Whytree/
+feedback.jsonl
