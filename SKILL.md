@@ -436,6 +436,24 @@ Skip Steps 3-4 (root connection check, motivation in own words) in Focused mode.
 
 **You MUST read `COMMITMENT_ARC.md` (in this skill's base directory) before running the closing protocol.** Do not attempt Phase 5 close without this file loaded.
 
+### Phase 5a: Obsidian close-time sync
+
+After the normal Commitment Arc close is complete, sync the active tree into Terry's Obsidian workspace. Run this exact constant command; do not interpolate user input:
+
+```bash
+node "$HOME/Codes/personal/terry-whytree/scripts/whytree-sync.mjs" --current
+```
+
+Then update the generated note's narrative sections in Korean, based only on the just-finished conversation:
+
+- `세션 요약`: 2-4 concise sentences naming the session flow and where the Commitment Arc landed.
+- `이번에 새로 보인 것`: 1-3 bullets for genuine new recognitions from the conversation.
+- `다음까지 해볼 한 가지 (Experiment)`: the selected experiment in the user's language, with any concrete time/place/duration that emerged.
+- `미해결 갈래`: open threads worth revisiting; use `- 없음` only if the close genuinely settled the live branches.
+- `메모`: leave as `- ` unless the user explicitly asked to record an extra memo.
+
+Do not alter the generated Purpose or tree visualization block by hand; rerun the sync command if the tree changed. Keep telemetry and proactive feedback behavior exactly as specified in TELEMETRY.md. Do not show raw JSON, node IDs, internal file data, or local file paths to the user.
+
 ### Phase 5b: Decision Session (post-discovery mode)
 
 **Trigger:** `purpose` is set in the tree JSON AND the user signals they already know their answer ("I found my purpose," "I already know," "what else is this tool for?").
