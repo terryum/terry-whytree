@@ -193,11 +193,18 @@ Use `USER_STATUS` and `SESSION_GAP` for Phase 0 and Return Check-in routing.
 
 Do not automatically read Terry's Facebook archive, public posts, papers, or surveys. Those are separate memory systems and should only be searched when Terry explicitly asks. The Whytree memory files are private context; never quote them as file contents, expose local paths to the user, or commit them.
 
-**Model check (after preamble, before session flow).** Check your own model ID from your system context. If the model ID does **not** contain `sonnet`, pause and tell the user:
+**Model check (after preamble, before session flow).** Check your own model ID from your system context and apply the runtime-specific guard:
 
-> "Hey — I noticed you're running on [model name]. Why Tree sessions work best on Sonnet (faster, more conversational). You can switch with `/model claude-sonnet-4-6` (or any newer Sonnet). Want to switch before we start?"
+- **Codex:** Why Tree sessions are short, conversational, and usually only need light local Markdown/JSON updates. Prefer `gpt-5.4-mini` for lower latency and cost. If the current model is `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex`, `gpt-5.2`, or another expensive/deep coding model, pause and tell the user:
 
-Wait for their reply. If they switch, proceed normally. If they decline or say to continue anyway, note it and proceed — do not ask again.
+  > "Hey — I noticed you're running on [model name]. Why Tree works best on `gpt-5.4-mini` in Codex: it is fast and cheap enough for short back-and-forth sessions, while still capable of the local file updates this skill needs. If you want, restart with `codex -m gpt-5.4-mini -C \"$PWD\"` before we begin."
+
+  Do not recommend `gpt-5.3-codex-spark` as the default because it is a research preview. If the user continues anyway, note it and proceed. If the model is unknown, mention `gpt-5.4-mini` once as the preferred next-session model, then proceed.
+- **Claude:** If the model ID does **not** contain `sonnet`, pause and tell the user:
+
+  > "Hey — I noticed you're running on [model name]. Why Tree sessions work best on Sonnet (faster, more conversational). You can switch with `/model claude-sonnet-4-6` (or any newer Sonnet). Want to switch before we start?"
+
+  Wait for their reply. If they switch, proceed normally. If they decline or say to continue anyway, note it and proceed — do not ask again.
 
 ## Demo mode
 

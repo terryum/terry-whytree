@@ -16,7 +16,13 @@ Use `/Users/terrytaewoongum/Codes/personal/terry-whytree/SKILL.md` as the source
   bash /Users/terrytaewoongum/Codes/personal/terry-whytree/preamble.sh
   ```
 - For demo mode, read `DEMO_MODE.md` from the repo and use the same repo-local preamble path.
-- Ignore the Claude Sonnet model guard. Codex is the intended runtime for this port.
+- Preferred Codex model: `gpt-5.4-mini`. Why Tree sessions are short, conversational, and only need light local Markdown/JSON updates, so this is the right default balance of cost, latency, and capability.
+- If the current Codex model is `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex`, `gpt-5.2`, or another expensive/deep coding model, recommend restarting before the session with:
+  ```bash
+  codex -m gpt-5.4-mini -C "$PWD"
+  ```
+  If Terry declines, continue the session without asking again.
+- Do not recommend `gpt-5.3-codex-spark` as the default because it is a research preview.
 - Keep the source operating rules: one question at a time, never show raw JSON/node IDs/file paths, and render only user-facing tree visualizations.
 - Store and update tree JSON in `~/.whytree` using the schema in the source skill.
 - At session start, read only Whytree private memory if present: `profile.md` and `agent-brief.md` in the Obsidian digest directory. Do not automatically search Facebook, posts, papers, or surveys.
