@@ -188,8 +188,8 @@ Use `USER_STATUS` and `SESSION_GAP` for Phase 0 and Return Check-in routing.
 
 **Terry private memory load.** If these local-only files exist, read them silently after the preamble and use them as background context only:
 
-- `$HOME/Codes/personal/terry-obsidian/vault/Private/Whytree/profile.md`
-- `$HOME/Codes/personal/terry-obsidian/vault/Private/Whytree/agent-brief.md`
+- `$HOME/Codes/personal/knowledge/terry-obsidian/vault/Private/Whytree/profile.md`
+- `$HOME/Codes/personal/knowledge/terry-obsidian/vault/Private/Whytree/agent-brief.md`
 
 Do not automatically read Terry's Facebook archive, public posts, papers, or surveys. Those are separate memory systems and should only be searched when Terry explicitly asks. The Whytree memory files are private context; never quote them as file contents, expose local paths to the user, or commit them.
 
@@ -461,7 +461,7 @@ Skip Steps 3-4 (root connection check, motivation in own words) in Focused mode.
 After the normal Commitment Arc close is complete, sync the active tree into Terry's Obsidian workspace. Run this exact constant command; do not interpolate user input:
 
 ```bash
-node "$HOME/Codes/personal/terry-whytree/scripts/whytree-sync.mjs" --current
+node "$HOME/Codes/personal/knowledge/terry-whytree/scripts/whytree-sync.mjs" --current
 ```
 
 Then update the generated local-only memory pack in Korean, based only on the just-finished conversation:

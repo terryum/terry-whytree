@@ -5,15 +5,15 @@ description: Terry's Codex port of Why Tree. Use for $whytree, guided purpose-di
 
 # $whytree
 
-Use `/Users/terrytaewoongum/Codes/personal/terry-whytree/SKILL.md` as the source of truth, adapting Claude-specific instructions to Codex.
+Use `/Users/terrytaewoongum/Codes/personal/knowledge/terry-whytree/SKILL.md` as the source of truth, adapting Claude-specific instructions to Codex.
 
 ## Codex Overrides
 
 - Invoke this as `$whytree`; if the source says `/whytree`, treat it as `$whytree`.
-- Resolve all referenced files relative to `/Users/terrytaewoongum/Codes/personal/terry-whytree`.
+- Resolve all referenced files relative to `/Users/terrytaewoongum/Codes/personal/knowledge/terry-whytree`.
 - Run the preamble with:
   ```bash
-  bash /Users/terrytaewoongum/Codes/personal/terry-whytree/preamble.sh
+  bash /Users/terrytaewoongum/Codes/personal/knowledge/terry-whytree/preamble.sh
   ```
 - For demo mode, read `DEMO_MODE.md` from the repo and use the same repo-local preamble path.
 - Preferred Codex model: `gpt-5.4-mini`. Why Tree sessions are short, conversational, and only need light local Markdown/JSON updates, so this is the right default balance of cost, latency, and capability.
@@ -29,14 +29,14 @@ Use `/Users/terrytaewoongum/Codes/personal/terry-whytree/SKILL.md` as the source
 - At session start, read only Whytree private memory if present: `profile.md` and `agent-brief.md` in the Obsidian digest directory. Do not automatically search Facebook, posts, papers, or surveys.
 - After the Commitment Arc closes, sync the current tree with:
   ```bash
-  node /Users/terrytaewoongum/Codes/personal/terry-whytree/scripts/whytree-sync.mjs --current
+  node /Users/terrytaewoongum/Codes/personal/knowledge/terry-whytree/scripts/whytree-sync.mjs --current
   ```
 - Then update the generated Obsidian session note plus `profile.md`, `profile.json`, `agent-brief.md`, and `evidence.jsonl` in Korean, preserving the generated Purpose/tree block.
 - Never commit or publish generated Whytree private memory files.
 
 ## Terry Context
 
-- Obsidian digest directory: `/Users/terrytaewoongum/Codes/personal/terry-obsidian/vault/Private/Whytree`
+- Obsidian digest directory: `/Users/terrytaewoongum/Codes/personal/knowledge/terry-obsidian/vault/Private/Whytree`
 - Generated memory files are local-only and gitignored in `terry-obsidian`.
 - Existing trees are already in `~/.whytree`; do not migrate or rename them unless Terry explicitly asks.
 - This port keeps the core Why Tree method, but adds Terry-specific local memory dataization.
