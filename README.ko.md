@@ -22,9 +22,17 @@ AI 상담사와 대화합니다. 답을 알려주지 않습니다 — 스스로�
 
 트리는 뼈대이지 핵심이 아닙니다. 대화가 쌓여갈 수 있게 발견을 저장하는 곳입니다. 진짜 경험은 내가 표현하지 못했던 것을 직접 말하게 되는 순간입니다.
 
+## 개인화 에이전트 메모리
+
+Why Tree는 Terry의 개인화 AI agent를 위해 두 번째 로컬 메모리 계층도 유지합니다: Temporal Personal Value Graph입니다. 눈에 보이는 트리 UX는 그대로 단순하게 두고, 비공개 메모리 pack에는 증거가 연결된 가치, 욕구, 개인 구성개념, 정체성 claim, 결정, 실험, 결과, agent 권한 정책을 저장할 수 있습니다.
+
+삶의 방향성은 하나의 트리 root만으로 충분하지 않습니다. 가치 충돌, 역할별 선호, 넘지 말아야 할 선, 불확실성, 오래된 자기이해, 실제 행동 결과가 함께 필요합니다. 그래서 graph는 자기이해를 영구 사실이 아니라 증거와 confidence가 붙은 가설로 다룹니다.
+
 ## 개인정보
 
 트리 — 발견한 것들의 구조화된 기록 — 는 내 기기의 `~/.whytree/`에만 저장됩니다. 어디에도 전송되지 않습니다.
+
+Terry의 생성된 identity memory pack도 로컬 전용입니다. 비공개 Obsidian Whytree workspace에 저장되며 commit하거나 publish하지 않습니다.
 
 대화 내용은 Claude Code를 통해 Anthropic이 처리합니다. 세션 중 대화가 Anthropic 서버로 전송되며, 기본 30일간 보관됩니다 (모델 개선에 동의한 경우 더 길어질 수 있습니다). 자세한 내용은 [Claude Code 데이터 사용 정책](https://docs.anthropic.com/en/docs/claude-code/data-usage)을 참고하세요.
 

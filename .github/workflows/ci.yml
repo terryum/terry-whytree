@@ -30,12 +30,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify LF line endings on shell scripts
-        # If .gitattributes is missing or broken, Windows checkouts will have
-        # CRLF on *.sh. Catch that explicitly with a clear error message
+      - name: Verify LF line endings on executable scripts
+        # If .gitattributes is missing or broken, Windows checkouts may have
+        # CRLF on executable scripts. Catch that explicitly with a clear error message
         # rather than letting preamble.sh fail cryptically.
         run: |
-          for f in preamble.sh scripts/release.sh test/skill-lint.sh; do
+          for f in preamble.sh scripts/release.sh scripts/identity-graph.mjs test/skill-lint.sh test/identity-graph.sh; do
             if file "$f" | grep -q CRLF; then
               echo "FAIL: $f has CRLF line endings — check .gitattributes" >&2
               exit 1
@@ -45,6 +45,9 @@ jobs:
 
       - name: Run skill linter
         run: ./test/skill-lint.sh
+
+      - name: Run identity graph tests
+        run: ./test/identity-graph.sh
 
       - name: Smoke-test preamble.sh
         # Runs preamble.sh in an empty ~/.whytree environment and verifies it

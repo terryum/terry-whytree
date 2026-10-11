@@ -17,7 +17,7 @@ echo
 
 # --- 1. Required files exist ---
 echo "1. Required files"
-for f in SKILL.md COMMITMENT_ARC.md PROBE_PATTERNS.md SEED_QUESTIONS.md READING.md DEMO_MODE.md TELEMETRY.md preamble.sh; do
+for f in SKILL.md COMMITMENT_ARC.md PROBE_PATTERNS.md SEED_QUESTIONS.md READING.md DEMO_MODE.md TELEMETRY.md preamble.sh scripts/identity-graph.mjs docs/identity-graph.md; do
   if [ -f "$SKILL_DIR/$f" ]; then
     pass "$f exists"
   else
@@ -215,6 +215,16 @@ for field in schemaVersion rootIds seedIds currentNodeId lastExperimentId create
     pass "Schema has $field"
   else
     fail "Schema missing $field"
+  fi
+done
+
+echo
+echo "7b. Identity graph memory"
+for term in "identityGraph" "IdentityClaim" "Decision" "Policy" "evidence.jsonl" "authority policy"; do
+  if grep -q "$term" "$SKILL" "$SKILL_DIR/docs/identity-graph.md" "$SKILL_DIR/scripts/identity-graph.mjs"; then
+    pass "Identity graph term '$term' present"
+  else
+    fail "Identity graph term '$term' missing"
   fi
 done
 

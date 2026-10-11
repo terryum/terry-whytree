@@ -7,6 +7,7 @@
 # `core.autocrlf=true` get preamble.sh silently corrupted on checkout,
 # which breaks the /whytree skill from the first invocation.
 *.sh text eol=lf
+*.mjs text eol=lf
 
 # Read by preamble.sh via `cat .version` / `read`. Must stay LF so the
 # trailing byte isn't a \r that pollutes VERSION=... output.

@@ -22,9 +22,17 @@ Every session ends with one concrete experiment. Not a list of possibilities. Th
 
 The tree is the backbone, not the point. It's where your discoveries live so the conversation can build on them. The real experience is hearing yourself say what you couldn't articulate before.
 
+## Personal agent memory
+
+Why Tree now keeps a second local memory layer for Terry's personalized agents: a Temporal Personal Value Graph. The visible tree stays simple, but the private memory pack can store evidence-linked values, needs, personal constructs, identity claims, decisions, experiments, outcomes, and authority policies.
+
+This matters because a life direction is not just a tree root. It includes value conflicts, role-specific preferences, hard boundaries, uncertainty, stale claims, and behavior over time. The graph treats self-knowledge as hypotheses with evidence and confidence, not as permanent facts.
+
 ## Your data
 
 Your tree — the structured record of what you discover — stays on your device in `~/.whytree/` (your home folder on any OS). It is never transmitted anywhere.
+
+Terry's generated identity memory pack is also local-only. It lives in the private Obsidian Whytree workspace and is not committed or published.
 
 Your conversation is processed by Anthropic through Claude Code. This means your words are sent to Anthropic's servers during the session. Anthropic retains this data for 30 days by default (longer if you've opted into model improvement). See [Claude Code's data usage policy](https://docs.anthropic.com/en/docs/claude-code/data-usage) for details.
 

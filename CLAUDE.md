@@ -29,9 +29,12 @@ No CLI, no runtime dependencies. Claude reads the skill files at the repo root d
 
 Tree files live in `~/.whytree/<slug>.json`. The active tree slug is in `~/.whytree/.current`. Schema fields: `schemaVersion`, `name`, `nodes` (keyed by UUID), `rootIds`, `seedIds`, `currentNodeId`, `lastExperimentId`, `createdAt`, `updatedAt`, `purpose`. Node types: `seed`, `why`, `how`.
 
+Terry's local Obsidian memory pack stores the durable self-model separately from tree JSON. `profile.json` is schemaVersion 2 and contains an `identityGraph` of evidence-linked hypotheses (`Value`, `Need`, `Construct`, `IdentityClaim`, `Decision`, `Policy`, etc.). `evidence.jsonl` is append-only and must store paraphrased evidence only, never raw transcript excerpts. See `docs/identity-graph.md` and `scripts/identity-graph.mjs`.
+
 ### Testing
 
 - `test/skill-lint.sh` — Linter (~12 categories, ~60 checks) validating JSON schema, safety sections, file references, curl safety, curl payload fields and forbidden fields, feedbackCategory enum, command enum, depersonalization rule, platform support, phase headings, supporting file content, and YAML frontmatter. Runs in CI on every PR to `main`.
+- `test/identity-graph.sh` — Validates v1 → v2 profile migration, schema validation, edge checks, evidence JSONL checks, and sync integration with the local memory pack.
 - `.github/workflows/ci.yml` — GitHub Actions workflow. Branch protection requires CI to pass.
 - `scripts/release.sh` — Automated release: lint gate → version bump → changelog → push.
 - `docs/spec-stress-test.md` — 15-scenario adversarial simulation spec (manual, ~$20/run).

@@ -3,6 +3,18 @@
 All notable changes to The Why Tree are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Added
+- Local Temporal Personal Value Graph memory layer for Terry's personalized-agent use case. Existing tree JSON stays schemaVersion 1; durable identity memory now lives in `profile.json` schemaVersion 2 plus append-only `evidence.jsonl`.
+- `scripts/identity-graph.mjs` for initializing, migrating, validating, and summarizing the identity graph memory pack.
+- `docs/identity-graph.md` documenting node types, edge types, evidence records, extraction rules, decision memo behavior, and default agent authority policy.
+- Identity graph regression test covering profile migration, graph validation, evidence validation, and `whytree-sync` memory-pack initialization.
+
+### Changed
+- Close-time Obsidian sync now initializes or migrates `profile.json` to schemaVersion 2.
+- Counselor protocol now preserves the short WhyTree UX while extracting values, constructs, decisions, contradictions, experiments, and authority policy as evidence-linked hypotheses after the Commitment Arc.
+
 ## [0.3.4] — 2026-04-22
 
 

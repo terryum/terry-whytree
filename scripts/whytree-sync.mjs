@@ -2,6 +2,7 @@
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { ensureProfileJsonV2, profileJsonTemplateV2 } from './identity-graph.mjs';
 
 const REPO_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const WHYTREE_DIR = process.env.WHYTREE_SYNC_HOME || path.join(os.homedir(), '.whytree');
@@ -411,28 +412,14 @@ function agentBriefTemplate() {
 }
 
 function profileJsonTemplate() {
-  return `${JSON.stringify({
-    schemaVersion: 1,
-    updatedAt: '',
-    terryBrief: '',
-    personalityPersona: [],
-    coreValues: [],
-    lifeDirection: [],
-    careerDecisionPrinciples: [],
-    innerTensions: [],
-    fearsAndAvoidancePatterns: [],
-    workStyle: [],
-    collaborationPreferences: [],
-    liveExperiments: [],
-    openQuestions: [],
-    evidenceIds: [],
-  }, null, 2)}\n`;
+  return profileJsonTemplateV2();
 }
 
 async function ensureMemoryPack() {
   await fs.mkdir(SESSION_DIR, { recursive: true });
   await writeIfMissing(PROFILE_MD, profileMarkdownTemplate());
   await writeIfMissing(PROFILE_JSON, profileJsonTemplate());
+  await ensureProfileJsonV2(PROFILE_JSON);
   await writeIfMissing(AGENT_BRIEF, agentBriefTemplate());
   await writeIfMissing(EVIDENCE_JSONL, '');
 }
